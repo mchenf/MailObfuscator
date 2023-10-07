@@ -14,9 +14,11 @@ namespace MailObfu
         private const string emailPattern = @"(([^<>()[\]\\.,;:\s@""]+(\.[^<>()[\]\\.,;:\s@""]+)*)|("".+""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))";
 
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByContent")]
+        [Alias("c")]
         public string? Content { get; set; }
 
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByDirectory")]
+        [Alias("d")]
         public string? Directory { get; set; }
 
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "CheckVersion")]
