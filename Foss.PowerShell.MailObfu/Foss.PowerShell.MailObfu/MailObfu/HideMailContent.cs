@@ -5,26 +5,27 @@ using System.Text.RegularExpressions;
 
 namespace MailObfu
 {
-    [CmdletBinding(DefaultParameterSetName = "ByFile")]
+    [CmdletBinding(DefaultParameterSetName = "ByContent")]
     [Cmdlet(VerbsCommon.Hide, "MailContent")]
     public class HideMailContent : Cmdlet
     {
         private const char obf = (char)0x2588;
         private const string emailPattern = @"(([^<>()[\]\\.,;:\s@""]+(\.[^<>()[\]\\.,;:\s@""]+)*)|("".+""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))";
 
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByContent")]
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = "ByContent", ValueFromPipeline = true)]
         [Alias("c")]
         public string? Content { get; set; }
-
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByFile")]
-        [Alias("d")]
-        public string? File { get; set; }
 
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "CheckVersion")]
         [Alias("v")]
         public SwitchParameter Version { get; set; } = false;
 
         protected override void BeginProcessing()
+        {
+         
+        }
+
+        protected override void ProcessRecord()
         {
             if (Version)
             {
@@ -34,26 +35,18 @@ namespace MailObfu
             }
             if (Content == null)
             {
-                throw new NotImplementedException("Not yet implemented");
+                return;
             }
-            else
+
+            Regex r = new Regex(emailPattern);
+            MatchCollection mc = r.Matches(Content);
+            WriteVerbose(string.Format("{0} matches found.", mc.Count));
+            foreach (Match m in mc)
             {
-                Regex r = new Regex(emailPattern);
-                MatchCollection mc = r.Matches(Content);
-                WriteVerbose(string.Format("{0} matches found.", mc.Count));
-                foreach (Match m in mc)
-                {
-                    WriteVerbose(m.Value);
-                }
-
-                WriteObject(r.Replace(Content, ObfuscateMail));
-
+                WriteVerbose(m.Value);
             }
-        }
 
-        protected override void ProcessRecord()
-        {
-            base.ProcessRecord();
+            WriteObject(r.Replace(Content, ObfuscateMail));
         }
 
         private string ObfuscateMail(Match match)
