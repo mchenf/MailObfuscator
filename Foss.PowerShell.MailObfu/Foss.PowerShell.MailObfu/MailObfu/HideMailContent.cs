@@ -1,14 +1,18 @@
-﻿using System.Management.Automation;
+﻿using System.Diagnostics;
+using System.Management.Automation;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MailObfu
 {
+
+    [CmdletBinding]
     [Cmdlet(VerbsCommon.Hide, "MailContent")]
     public class HideMailContent : Cmdlet
     {
         private const char obf = (char)0x2588;
         private const string emailPattern = @"(([^<>()[\]\\.,;:\s@""]+(\.[^<>()[\]\\.,;:\s@""]+)*)|("".+""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))";
+
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByContent")]
         public string? Content { get; set; }
 
@@ -17,30 +21,33 @@ namespace MailObfu
 
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "CheckVersion")]
         [Alias("v")]
-        public bool Version { get; set; }
+        public SwitchParameter Version { get; set; } = false;
 
         protected override void BeginProcessing()
         {
+            if (Version)
+            {
+                Version v = new Version(1, 0, 0, 4);
+                WriteObject(v);
+                return;
+            }
             if (Content == null)
             {
-                WriteObject("ParmSet: ByDirectory is used.");
                 throw new NotImplementedException("Not yet implemented");
             }
             else
             {
-                WriteObject("ParmSet: ByContent is used.");
                 Regex r = new Regex(emailPattern);
                 MatchCollection mc = r.Matches(Content);
-                WriteObject(string.Format("{0} matches found.", mc.Count));
+                WriteVerbose(string.Format("{0} matches found.", mc.Count));
                 foreach (Match m in mc)
                 {
-                    WriteObject(m.Value);
+                    WriteVerbose(m.Value);
                 }
 
                 WriteObject(r.Replace(Content, ObfuscateMail));
 
             }
-            WriteObject("Exit 0");
         }
 
         private string ObfuscateMail(Match match)
