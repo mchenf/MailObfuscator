@@ -5,8 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace MailObfu
 {
-
-    [CmdletBinding(DefaultParameterSetName = "ByDirectory")]
+    [CmdletBinding(DefaultParameterSetName = "ByFile")]
     [Cmdlet(VerbsCommon.Hide, "MailContent")]
     public class HideMailContent : Cmdlet
     {
@@ -17,9 +16,9 @@ namespace MailObfu
         [Alias("c")]
         public string? Content { get; set; }
 
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByDirectory")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByFile")]
         [Alias("d")]
-        public string? Directory { get; set; }
+        public string? File { get; set; }
 
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "CheckVersion")]
         [Alias("v")]
@@ -27,9 +26,6 @@ namespace MailObfu
 
         protected override void BeginProcessing()
         {
-            
-
-
             if (Version)
             {
                 Version v = new Version(1, 0, 0, 4);
@@ -53,6 +49,11 @@ namespace MailObfu
                 WriteObject(r.Replace(Content, ObfuscateMail));
 
             }
+        }
+
+        protected override void ProcessRecord()
+        {
+            base.ProcessRecord();
         }
 
         private string ObfuscateMail(Match match)
