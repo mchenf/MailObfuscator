@@ -11,6 +11,7 @@ namespace MailObfu
     {
         private const char obf = (char)0x2588;
         private const string emailPattern = @"(([^<>()[\]\\.,;:\s@""]+(\.[^<>()[\]\\.,;:\s@""]+)*)|("".+""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))";
+        private const string phonePattern = @"([0-9]{2,}\s)*[0-9]{2,}";
 
         [Parameter(Mandatory = false, Position = 0, ParameterSetName = "ByContent", ValueFromPipeline = true)]
         [Alias("c")]
@@ -37,19 +38,20 @@ namespace MailObfu
             {
                 return;
             }
-
-            Regex r = new Regex(emailPattern);
-            MatchCollection mc = r.Matches(Content);
-            WriteVerbose(string.Format("{0} matches found.", mc.Count));
-            foreach (Match m in mc)
-            {
-                WriteVerbose(m.Value);
-            }
-
-            WriteObject(r.Replace(Content, ObfuscateMail));
+            WriteObject(ObfuscateMail(Content));
         }
 
-        private string ObfuscateMail(Match match)
+        private string ObfuscateMail(string input)
+        {
+            Regex r1 = new Regex(emailPattern);
+            Regex r2 = new Regex(phonePattern);
+
+            return input
+                .Desensitize(r1, ObfuscateMailEvaluator)
+                .Desensitize(r2, ObfuscateMailEvaluator);
+        }
+
+        private string ObfuscateMailEvaluator(Match match)
         {
             string m = match.Value;
             StringBuilder sb = new StringBuilder();
