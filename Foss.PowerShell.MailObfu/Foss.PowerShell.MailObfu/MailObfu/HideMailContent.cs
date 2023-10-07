@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace MailObfu
 {
 
-    [CmdletBinding]
+    [CmdletBinding(DefaultParameterSetName = "ByDirectory")]
     [Cmdlet(VerbsCommon.Hide, "MailContent")]
     public class HideMailContent : Cmdlet
     {
@@ -27,6 +27,9 @@ namespace MailObfu
 
         protected override void BeginProcessing()
         {
+            
+
+
             if (Version)
             {
                 Version v = new Version(1, 0, 0, 4);
