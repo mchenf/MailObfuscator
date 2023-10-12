@@ -12,6 +12,10 @@ namespace MailObfu
         private const char obf = (char)0x2588;
         private const string emailPattern = @"(([^<>()[\]\\.,;:\s@""]+(\.[^<>()[\]\\.,;:\s@""]+)*)|("".+""))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))";
         private const string phonePattern = @"([0-9]{2,}\s)*[0-9]{2,}";
+        private const string sitePattern = @"^(?=site:).+$";
+        private const string webPattern = @"\^web:*\$";
+        private const string logisticPattern = @"\^logistics:*\$";
+
 
         [Parameter(Mandatory = false, Position = 0, ParameterSetName = "ByContent", ValueFromPipeline = true)]
         [Alias("c")]
@@ -45,10 +49,12 @@ namespace MailObfu
         {
             Regex r1 = new Regex(emailPattern);
             Regex r2 = new Regex(phonePattern);
+            Regex r3 = new Regex(sitePattern, RegexOptions.IgnoreCase);
 
             return input
                 .Desensitize(r1, ObfuscateMailEvaluator)
-                .Desensitize(r2, ObfuscateMailEvaluator);
+                .Desensitize(r2, ObfuscateMailEvaluator)
+                .Desensitize(r3, ObfuscateMailEvaluator);
         }
 
         private string ObfuscateMailEvaluator(Match match)
