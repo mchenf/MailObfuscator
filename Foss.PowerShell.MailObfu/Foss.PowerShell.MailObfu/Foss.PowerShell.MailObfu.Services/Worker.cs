@@ -10,12 +10,9 @@ namespace DesensitizeMailService
 
         private readonly FileSystemWatcher _watcher;
 
-        private readonly HideMailContent _desensitizer;
-
         public Worker(ILogger<Worker> logger)
         {
             _logger = logger;
-            _desensitizer = new HideMailContent();
 
             if (!Directory.Exists(outDir))
             {
