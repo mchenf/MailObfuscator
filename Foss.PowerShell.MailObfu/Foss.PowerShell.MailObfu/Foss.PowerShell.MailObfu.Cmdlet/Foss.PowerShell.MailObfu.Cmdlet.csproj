@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Foss.PowerShell.MailObfu.Core\Foss.PowerShell.MailObfu.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="MailObfu.psd1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

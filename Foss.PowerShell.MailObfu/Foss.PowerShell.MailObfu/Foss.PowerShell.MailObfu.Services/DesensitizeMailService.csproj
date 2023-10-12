@@ -12,6 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MailObfu\MailObfu.csproj" />
+    <ProjectReference Include="..\Foss.PowerShell.MailObfu.Core\Foss.PowerShell.MailObfu.Core.csproj" />
   </ItemGroup>
 </Project>

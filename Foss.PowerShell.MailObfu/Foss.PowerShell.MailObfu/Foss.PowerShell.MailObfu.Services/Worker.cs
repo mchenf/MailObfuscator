@@ -1,4 +1,4 @@
-using MailObfu;
+
 namespace DesensitizeMailService
 {
     public class Worker : BackgroundService
