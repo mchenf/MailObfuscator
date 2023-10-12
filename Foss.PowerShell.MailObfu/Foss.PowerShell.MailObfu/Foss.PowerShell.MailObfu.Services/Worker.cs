@@ -46,6 +46,7 @@ namespace DesensitizeMailService
 
                 string processed = _mailDes.ObfuscateMail(content);
                 _logger.LogInformation(new EventId(3, "mailDesensitized"), processed);
+                //TODO: Implement an output file mechanism for better file output.
             }
 
 
